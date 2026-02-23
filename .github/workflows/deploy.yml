@@ -1,0 +1,48 @@
+name: Deploy to Koyeb
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Koyeb
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build JAR
+        run: ./gradlew clean bootJar
+
+      - name: Install Koyeb CLI
+        run: |
+          curl -fsSL https://cli.koyeb.com/install.sh | sh
+          echo "$HOME/.koyeb/bin" >> $GITHUB_PATH
+
+      - name: Deploy to Koyeb
+        env:
+          KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
+        run: |
+          koyeb app init eshop \
+            --git github.com/${{ github.repository }} \
+            --git-branch main \
+            --git-build-command "./gradlew bootJar" \
+            --git-run-command "java -jar build/libs/*.jar" \
+            --ports 8080:http \
+            --routes /:8080 \
+            --instance-type nano
