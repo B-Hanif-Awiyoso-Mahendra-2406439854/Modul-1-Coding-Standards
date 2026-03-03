@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface CarService {
     public Car create(Car car);
-    public List<Car> findALl();
+    public List<Car> findAll();
     Car findById(String carId);
 
     Car update(String carId, Car car);

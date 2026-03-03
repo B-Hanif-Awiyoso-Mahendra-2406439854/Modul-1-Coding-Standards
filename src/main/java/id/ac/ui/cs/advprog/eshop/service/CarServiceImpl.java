@@ -23,7 +23,7 @@ public class CarServiceImpl implements CarService{
     }
 
     @Override
-    public List<Car> findALl() {
+    public List<Car> findAll() {
         Iterator<Car> carIterator = carRepository.findAll();
         List<Car> allCars = new ArrayList<>();
         carIterator.forEachRemaining(allCars::add);
