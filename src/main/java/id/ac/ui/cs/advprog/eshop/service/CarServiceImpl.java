@@ -1,0 +1,47 @@
+package id.ac.ui.cs.advprog.eshop.service;
+import id.ac.ui.cs.advprog.eshop.model.Car;
+import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class CarServiceImpl implements CarService{
+    @Autowired
+    private CarRepository carRepository;
+
+    @Override
+    public Car create(Car car) {
+        if(car.getCarId() == null){
+            car.setCarId(UUID.randomUUID().toString());
+        }
+        carRepository.create(car);
+        return car;
+    }
+
+    @Override
+    public List<Car> findALl() {
+        Iterator<Car> carIterator = carRepository.findAll();
+        List<Car> allCars = new ArrayList<>();
+        carIterator.forEachRemaining(allCars::add);
+        return allCars;
+    }
+
+    @Override
+    public Car findById(String carId) {
+        return carRepository.findById(carId);
+    }
+
+    @Override
+    public Car update(String carId, Car car){
+        return carRepository.update(carId, car);
+    }
+
+    @Override
+    public void deleteCarById(String carId) {
+        carRepository.delete(carId);
+    }
+}
