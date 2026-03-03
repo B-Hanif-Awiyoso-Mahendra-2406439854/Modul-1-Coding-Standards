@@ -562,3 +562,138 @@ tasks.jacocoTestReport {
 **NPM:** 2406439854  
 **Kelas:** Advanced Programming - B  
 **Tanggal:** 23 Februari 2026
+
+---
+
+## Reflection 4
+
+### Penerapan SOLID Principles pada Project EShop
+
+Setelah mempelajari SOLID principles, saya melakukan refactoring pada beberapa bagian di project EShop (terutama layer `service` dan `repository`) supaya desainnya lebih rapi, mudah diuji, dan mudah dikembangkan. Berikut refleksi saya berdasarkan implementasi yang ada di project.
+
+---
+
+### 1) Prinsip apa saja yang saya terapkan?
+
+#### A. Single Responsibility Principle (SRP)
+**Inti:** satu class = satu tanggung jawab utama.
+
+**Yang saya lakukan di project:**
+- Memisahkan tanggung jawab *generate id* dari logic CRUD.
+- Saya membuat komponen khusus untuk generate id (`IdGenerator` + implementasi `UuidGenerator`)
+
+**Contoh:**
+- `UuidGenerator` hanya bertugas menghasilkan id.
+- `ProductServiceImpl` dan `CarServiceImpl` hanya mengatur business logic create/update/delete, bukan detail cara id dibuat.
+
+#### B. Open/Closed Principle (OCP)
+**Inti:** kode sebaiknya mudah di-*extend* tanpa perlu mengubah kode lama.
+
+**Yang saya lakukan di project:**
+- Menggunakan interface untuk kontrak (misal `ProductService`, `CarService`, `ProductRepository`, `CarRepository`).
+- Dengan ini, saya bisa menambahkan implementasi baru tanpa mengubah kode pemanggilnya.
+
+**Contoh kasus extension:**
+- Kalau suatu saat repository in-memory mau diganti ke database/JPA, saya bisa bikin `ProductRepositoryDatabaseImpl` tanpa harus mengubah controller (controller tetap memanggil service) dan tanpa mengubah kontrak interface.
+
+#### C. Liskov Substitution Principle (LSP)
+**Inti:** implementasi concrete harus bisa menggantikan interface/parent tanpa mengubah behavior yang diharapkan.
+
+**Yang saya lakukan di project:**
+- `ProductRepositoryImpl` harus bisa dipakai di mana pun `ProductRepository` dibutuhkan.
+- `UuidGenerator` harus bisa dipakai di mana pun `IdGenerator` dibutuhkan.
+
+**Contoh:**
+- `ProductServiceImpl` bergantung pada `ProductRepository` (interface), sehingga implementasinya bisa diganti tanpa menyebabkan crash selama kontraknya sama.
+
+#### D. Interface Segregation Principle (ISP)
+**Inti:** interface jangan “terlalu gemuk”; client tidak dipaksa implement method yang tidak dibutuhkan.
+
+**Yang saya lakukan di project:**
+- Interface di layer `service` dibuat fokus pada apa yang dibutuhkan untuk entity tersebut.
+  - `ProductService` hanya expose method CRUD product.
+  - `CarService` hanya expose method CRUD car.
+
+**Contoh:**
+- Saya menghindari membuat satu interface besar yang memaksa semua entity punya method yang sama padahal field/logic bisa berbeda.
+
+#### E. Dependency Inversion Principle (DIP)
+**Inti:** high-level module (service/controller) bergantung pada abstraksi (interface), bukan concrete class.
+
+**Yang saya lakukan di project:**
+- Service bergantung pada interface repository, bukan class repository langsung.
+- Menggunakan dependency injection (constructor injection untuk dependency utama) supaya dependency terlihat jelas dan mudah di-mock saat testing.
+
+**Contoh:**
+- `ProductController` bergantung pada `ProductService` (interface), bukan `ProductServiceImpl`.
+- `ProductServiceImpl` bergantung pada `ProductRepository` (interface) dan `IdGenerator` (interface).
+
+---
+
+### 2) Apa keuntungan menerapkan SOLID pada project ini? (dengan contoh)
+
+#### A. Kode lebih mudah di-test (testability naik)
+**Contoh:**
+- Dengan DIP, saya bisa melakukan mocking `ProductRepository` di unit test `ProductServiceImplTest` tanpa butuh implementasi repository beneran.
+- Service logic bisa diuji terisolasi (tanpa efek samping).
+
+Kenapa ini penting?
+- Saat ada refactor, unit test jadi “safety net” yang cepat mendeteksi perubahan yang merusak.
+
+#### B. Perubahan lebih terisolasi (maintenance lebih mudah)
+**Contoh:**
+- Jika logic generate id berubah (misal dari UUID menjadi format lain), saya cukup menambah/ubah implementasi `IdGenerator` tanpa menyentuh code di repository.
+
+Tanpa SRP, perubahan kecil bisa menyebar ke banyak file.
+
+#### C. Lebih fleksibel untuk pengembangan fitur baru
+**Contoh:**
+- Menambah entity baru (misal `Order`) jadi lebih mudah karena pattern-nya sudah jelas:
+  - buat `Order` model
+  - buat `OrderRepository` + implementasinya
+  - buat `OrderService` + implementasinya
+  - buat `OrderController`
+
+Struktur berlapis + interface membuat penambahan fitur lebih konsisten.
+
+#### D. Mengurangi tight coupling
+**Contoh:**
+- Controller tidak perlu tahu detail penyimpanan data (in-memory list / database). Controller hanya berkomunikasi lewat service.
+
+Ini membuat perubahan implementasi backend tidak memaksa perubahan di layer presentation.
+
+---
+
+### 3) Apa kerugian jika SOLID tidak diterapkan? (dengan contoh)
+
+#### A. Tight coupling → sulit refactor
+**Contoh masalah:**
+- Jika `ProductServiceImpl` langsung membuat objek `ProductRepositoryImpl` di dalamnya (tanpa interface), maka saat repository diganti (misal ke database), service harus ikut diubah.
+
+Akibat:
+- perubahan kecil jadi domino effect (banyak file berubah)
+- risiko bug meningkat
+
+#### B. Class dengan banyak tanggung jawab → sulit dipahami dan rawan bug
+**Contoh masalah:**
+- Jika repository sekaligus generate id, validasi, logging, dan persistence dalam satu method, maka satu perubahan requirement akan mempengaruhi banyak behavior.
+
+Akibat:
+- debugging sulit
+- test makin kompleks
+
+#### C. Unit test menjadi sulit ditulis
+**Contoh masalah:**
+- Tanpa DIP (tidak ada interface), kita sulit mocking dependency.
+- Akhirnya banyak yang terpaksa menggunakan integration test saja, yang lebih lambat dan setup-nya lebih berat.
+
+Akibat:
+- developer jadi malas menulis test
+- bug lebih sering lolos ke production
+
+---
+
+**Nama:** Hanif Awiyoso Mahendra  
+**NPM:** 2406439854  
+**Kelas:** Advanced Programming - B  
+**Tanggal:** 3 Maret 2026
