@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/car")
 public class CarController {
 
+    private final CarService carService;
+
     @Autowired
-    private CarService carService;
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
 
     @GetMapping("/create")
     public String createCarPage(Model model) {
@@ -49,14 +53,14 @@ public class CarController {
     }
 
     @PostMapping("/update")
-    public String updateCar(@ModelAttribute Car car, @RequestParam("carId") String carId) {
-        carService.update(carId, car);
+    public String updateCar(@ModelAttribute Car car) {
+        carService.update(car);
         return "redirect:/car/list";
     }
 
     @GetMapping("/delete/{carId}")
     public String deleteCar(@PathVariable("carId") String carId){
-        carService.deleteCarById(carId);
+        carService.delete(carId);
         return "redirect:/car/list";
     }
 }
