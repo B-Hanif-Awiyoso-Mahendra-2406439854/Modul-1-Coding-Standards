@@ -16,33 +16,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'gradle'
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Build JAR
-        run: ./gradlew clean bootJar
-
       - name: Install Koyeb CLI
         run: |
           curl -fsSL https://cli.koyeb.com/install.sh | sh
           echo "$HOME/.koyeb/bin" >> $GITHUB_PATH
 
-      - name: Deploy to Koyeb
+      - name: Deploy to Koyeb with Docker
         env:
           KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
         run: |
-          koyeb app init eshop \
+          # Try to create new service, or update if exists
+          koyeb service create eshop \
+            --app eshop \
             --git github.com/${{ github.repository }} \
-            --git-branch main \
-            --git-build-command "./gradlew bootJar" \
-            --git-run-command "java -jar build/libs/*.jar" \
+            --git-branch ${{ github.ref_name }} \
+            --git-builder dockerfile \
+            --git-dockerfile Dockerfile \
             --ports 8080:http \
             --routes /:8080 \
-            --instance-type nano
+            --regions fra \
+            --instance-type nano \
+            --env PORT=8080 \
+            --skip-cache || \
+          koyeb service update eshop/eshop \
+            --git github.com/${{ github.repository }} \
+            --git-branch ${{ github.ref_name }} \
+            --skip-cache

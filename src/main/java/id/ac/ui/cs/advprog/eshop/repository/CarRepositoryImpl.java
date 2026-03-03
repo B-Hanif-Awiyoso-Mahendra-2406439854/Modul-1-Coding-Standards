@@ -4,29 +4,32 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class CarRepositoryImpl implements CarRepository {
     private final List<Car> carData = new ArrayList<>();
 
     @Override
-    public Car save(Car car) {
+    public Car create(Car car) {
         carData.add(car);
         return car;
     }
 
     @Override
-    public Optional<Car> findById(String id) {
-        return carData.stream()
-                .filter(car -> car.getCarId().equals(id))
-                .findFirst();
+    public Car findById(String id) {
+        for (Car car : carData) {
+            if (car.getCarId().equals(id)) {
+                return car;
+            }
+        }
+        return null;
     }
 
     @Override
-    public List<Car> findAll() {
-        return new ArrayList<>(carData);
+    public Iterator<Car> findAll() {
+        return carData.iterator();
     }
 
     @Override

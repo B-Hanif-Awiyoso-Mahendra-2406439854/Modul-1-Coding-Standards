@@ -1,12 +1,11 @@
 package id.ac.ui.cs.advprog.eshop.repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Iterator;
 
 public interface Repository<T, ID> {
-    T save(T entity);
-    Optional<T> findById(ID id);
-    List<T> findAll();
+    T create(T entity);
+    T findById(ID id);
+    Iterator<T> findAll();
     T update(T entity);
     void delete(ID id);
 }

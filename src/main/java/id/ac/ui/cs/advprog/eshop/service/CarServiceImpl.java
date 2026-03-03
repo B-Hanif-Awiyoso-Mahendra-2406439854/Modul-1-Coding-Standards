@@ -3,6 +3,9 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -22,17 +25,21 @@ public class CarServiceImpl implements CarService{
         if(car.getCarId() == null || car.getCarId().isEmpty()){
             car.setCarId(idGenerator.generateId());
         }
-        return carRepository.save(car);
+        carRepository.create(car);
+        return car;
     }
 
     @Override
     public List<Car> findAll() {
-        return carRepository.findAll();
+        Iterator<Car> carIterator = carRepository.findAll();
+        List<Car> allCars = new ArrayList<>();
+        carIterator.forEachRemaining(allCars::add);
+        return allCars;
     }
 
     @Override
     public Car findById(String carId) {
-        return carRepository.findById(carId).orElse(null);
+        return carRepository.findById(carId);
     }
 
     @Override
