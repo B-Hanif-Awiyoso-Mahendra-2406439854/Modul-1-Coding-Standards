@@ -8,17 +8,24 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
 
+    private final ProductRepository productRepository;
+    private final IdGenerator idGenerator;
+
     @Autowired
-    private ProductRepository productRepository;
+    public ProductServiceImpl(ProductRepository productRepository, IdGenerator idGenerator) {
+        this.productRepository = productRepository;
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     public Product create(Product product){
-        product.setProductId(UUID.randomUUID().toString());
+        if (product.getProductId() == null || product.getProductId().isEmpty()) {
+            product.setProductId(idGenerator.generateId());
+        }
         productRepository.create(product);
         return product;
     }

@@ -3,20 +3,27 @@ import id.ac.ui.cs.advprog.eshop.model.Car;
 import id.ac.ui.cs.advprog.eshop.repository.CarRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class CarServiceImpl implements CarService{
+
+    private final CarRepository carRepository;
+    private final IdGenerator idGenerator;
+
     @Autowired
-    private CarRepository carRepository;
+    public CarServiceImpl(CarRepository carRepository, IdGenerator idGenerator) {
+        this.carRepository = carRepository;
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     public Car create(Car car) {
-        if(car.getCarId() == null){
-            car.setCarId(UUID.randomUUID().toString());
+        if(car.getCarId() == null || car.getCarId().isEmpty()){
+            car.setCarId(idGenerator.generateId());
         }
         carRepository.create(car);
         return car;
@@ -36,12 +43,12 @@ public class CarServiceImpl implements CarService{
     }
 
     @Override
-    public Car update(String carId, Car car){
-        return carRepository.update(carId, car);
+    public Car update(Car updatedCar){
+        return carRepository.update(updatedCar);
     }
 
     @Override
-    public void deleteCarById(String carId) {
+    public void delete(String carId) {
         carRepository.delete(carId);
     }
 }
