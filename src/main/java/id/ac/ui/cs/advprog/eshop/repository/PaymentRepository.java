@@ -21,6 +21,10 @@ public class PaymentRepository {
         return payment;
     }
 
+    public List<Payment> findAll() {
+        return new ArrayList<>(paymentData);
+    }
+
     public Payment findById(String paymentId) {
         for (Payment savedPayment : paymentData) {
             if (savedPayment.getId().equals(paymentId)) {
@@ -28,9 +32,5 @@ public class PaymentRepository {
             }
         }
         return null;
-    }
-
-    public List<Payment> findAll() {
-        return new ArrayList<>(paymentData);
     }
 }
