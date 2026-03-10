@@ -56,7 +56,7 @@ class OrderRepositoryTest {
     void testSaveUpdate() {
         Order order = orders.get(1);
         orderRepository.save(order);
-        Order newOrder = new Order(orders.getId(), order.getProducts(), order.getOrderTime(),
+        Order newOrder = new Order(order.getId(), order.getProducts(), order.getOrderTime(),
             order.getAuthor(), OrderStatus.SUCCESS.getValue());
         Order result = orderRepository.save(newOrder);
 
@@ -65,7 +65,6 @@ class OrderRepositoryTest {
         assertEquals(order.getId(), findResult.getId());
         assertEquals(order.getOrderTime(), findResult.getOrderTime());
         assertEquals(order.getAuthor(), findResult.getAuthor());
-        assertEquals(order.getStatus(), findResult.getStatus());
         assertEquals(OrderStatus.SUCCESS.getValue(), findResult.getStatus());
     }
 
