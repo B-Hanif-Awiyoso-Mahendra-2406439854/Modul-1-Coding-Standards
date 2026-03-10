@@ -697,3 +697,38 @@ Akibat:
 **NPM:** 2406439854  
 **Kelas:** Advanced Programming - B  
 **Tanggal:** 3 Maret 2026
+
+---
+
+## Reflection 4 - TDD dan Prinsip F.I.R.S.T.
+
+### 1. Refleksi terhadap Alur Test-Driven Development
+
+Setelah mengikuti alur Test-Driven Development pada exercise ini, saya merasa bahwa pendekatan TDD cukup berguna dan relevan untuk proses pengembangan saya. Dengan menulis test terlebih dahulu, saya dipaksa memahami requirement secara lebih rinci sebelum mulai mengimplementasikan kode. Hal ini membantu saya menghindari implementasi yang terlalu jauh dari kebutuhan, karena setiap perubahan langsung diarahkan oleh ekspektasi yang tertulis di test.
+
+Jika dikaitkan dengan pertanyaan reflektif yang dibahas oleh Percival (2017), saya melihat bahwa test yang dibuat telah cukup membantu menjawab pertanyaan penting seperti: apakah test yang saya tulis benar-benar memeriksa perilaku yang dibutuhkan, apakah test tersebut membantu saya mendesain kode yang lebih baik, dan apakah kegagalan test memberikan umpan balik yang jelas. Dalam beberapa kasus, jawabannya ya. Misalnya pada model `Order`, penulisan test lebih dulu membuat saya sadar bahwa status order memiliki constraint yang spesifik dan bahwa pembuatan order dengan produk kosong harus ditolak. Tanpa test di awal, aturan-aturan seperti ini lebih mudah terlewat.
+
+Meski begitu, saya juga menyadari bahwa alur TDD saya belum selalu disiplin sepenuhnya. Ada beberapa momen di mana saya baru benar-benar memahami detail requirement setelah melihat implementasi atau setelah test gagal beberapa kali. Ini menunjukkan bahwa pada praktiknya saya masih cenderung berpindah-pindah antara memahami requirement, menulis test, dan memperbaiki implementasi, bukan mengikuti siklus red-green-refactor secara bersih. Jadi, TDD sudah cukup berguna bagi saya, tetapi efektivitasnya masih bisa ditingkatkan.
+
+Hal yang perlu saya lakukan pada pembuatan test berikutnya adalah memecah requirement menjadi skenario yang lebih kecil sebelum mulai menulis kode, lalu menuliskan test satu per satu sesuai perilaku yang benar-benar diharapkan. Saya juga perlu memastikan bahwa setiap test gagal karena alasan yang tepat di fase awal, bukan karena kesalahan setup atau kesalahan sintaks. Dengan begitu, TDD tidak hanya menjadi formalitas menulis test lebih dulu, tetapi benar-benar menjadi alat bantu untuk mendesain kode yang lebih tepat, sederhana, dan aman untuk diubah.
+
+### 2. Refleksi terhadap Prinsip F.I.R.S.T.
+
+Secara umum, unit test yang saya buat sudah cukup mendekati prinsip F.I.R.S.T., tetapi belum sepenuhnya optimal di semua aspek.
+
+**Fast**: Sebagian besar unit test sudah cepat karena berfokus pada object model dan service dengan dependency yang dimock menggunakan Mockito. Test seperti `OrderTest` dan `OrderServiceTest` tidak membutuhkan akses database atau server sungguhan, sehingga waktu eksekusinya relatif singkat.
+
+**Independent**: Test yang dibuat pada dasarnya independen karena setiap test menyiapkan datanya sendiri melalui `setUp()` dan tidak bergantung pada urutan eksekusi test lain. Ini sudah baik karena hasil satu test tidak seharusnya memengaruhi test lainnya.
+
+**Repeatable**: Test cukup repeatable karena menggunakan data yang konsisten dan tidak bergantung pada kondisi eksternal seperti jaringan atau database production. Namun, saya tetap perlu berhati-hati agar tidak menambahkan ketergantungan pada state global atau sumber data bersama di kemudian hari.
+
+**Self-Validating**: Test sudah cukup self-validating karena menggunakan assertion yang jelas seperti `assertEquals`, `assertThrows`, `assertNull`, dan `assertTrue`. Hasil test dapat langsung menunjukkan pass atau fail tanpa perlu pemeriksaan manual.
+
+**Timely**: Bagian ini masih yang paling perlu ditingkatkan. Idealnya, test ditulis sebelum implementasi dan menjadi pemandu desain. Dalam praktik exercise ini, beberapa test memang ditulis untuk mengarahkan implementasi, tetapi ada juga situasi di mana implementasi atau struktur kode baru dirapikan setelah test dan kode sama-sama berkembang. Artinya, prinsip timely sudah diterapkan sebagian, tetapi belum konsisten.
+
+Jadi, kesimpulannya adalah test yang saya buat sudah cukup baik pada aspek Fast, Independent, Repeatable, dan Self-Validating, tetapi masih perlu peningkatan pada aspek Timely. Untuk perbaikan ke depan, saya perlu lebih konsisten menulis test sebelum implementasi, memperjelas skenario dari requirement sejak awal, dan memastikan setiap test benar-benar menguji satu perilaku spesifik. Dengan begitu, test suite tidak hanya berfungsi sebagai alat verifikasi, tetapi juga sebagai panduan desain yang lebih efektif.
+
+**Nama:** Hanif Awiyoso Mahendra
+**NPM:** 2406439854
+**Kelas:** Advanced Programming - B
+**Tanggal:** 10 Maret 2026
