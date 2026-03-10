@@ -65,7 +65,7 @@ class OrderServiceTest {
         doReturn(order).when(orderRepository).save(order);
 
         Order result = orderService.createOrder(order);
-        verify(orderRepository, times(1).save(order));
+        verify(orderRepository, times(1)).save(order);
         assertEquals(order.getId(), result.getId());
     }
 
