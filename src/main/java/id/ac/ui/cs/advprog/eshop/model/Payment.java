@@ -48,6 +48,10 @@ public class Payment {
         throw new IllegalArgumentException();
     }
 
+    private boolean hasValue(String value) {
+        return value != null && !value.isEmpty();
+    }
+
     private boolean isValidVoucherCode(String voucherCode) {
         if (voucherCode == null || voucherCode.length() != 16 || !voucherCode.startsWith("ESHOP")) {
             return false;
@@ -57,9 +61,5 @@ public class Payment {
                 .filter(Character::isDigit)
                 .count();
         return digitCount == 8;
-    }
-
-    private boolean hasValue(String value) {
-        return value != null && !value.isEmpty();
     }
 }
